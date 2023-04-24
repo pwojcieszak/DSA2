@@ -134,10 +134,9 @@ public:
         if(!tablica[w1].locate(w2)) {
             tablica[w1].add(w2);
             izolowane.remove(w2);
-            if(!czy_skierowany) {
+            izolowane.remove(w1);
+            if(!czy_skierowany)
                 tablica[w2].add(w1);
-                izolowane.remove(w1);
-            }
         }
     }
 

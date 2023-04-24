@@ -72,10 +72,9 @@ public:
         if(tab[w1 + 1][w2 + 1] == 0){
             tab[w1 + 1][w2 + 1] = 1;
             izolowane.remove(w2);
-            if (!czy_skierowany) {
+            izolowane.remove(w1);
+            if (!czy_skierowany)
                 tab[w2 + 1][w1 + 1] = 1;
-                izolowane.remove(w1);
-            }
         }
     }
 
@@ -88,7 +87,7 @@ public:
                 else if (j == 0) cout<< i-1 <<" ";
                 else cout<<tab[i][j]<<" ";
             }
-        cout<<endl;
+            cout<<endl;
         }
     }
 
@@ -116,10 +115,9 @@ public:
         if(!tablica[w1].locate(w2)) {
             tablica[w1].add(w2);
             izolowane.remove(w2);
-            if(!czy_skierowany) {
+            izolowane.remove(w1);
+            if(!czy_skierowany)
                 tablica[w2].add(w1);
-                izolowane.remove(w1);
-            }
         }
     }
 
@@ -160,12 +158,12 @@ public:
         else{
             tab[w1 + 1][l_krawedzi+1] = 1;
             tab[w2 + 1][l_krawedzi+1] = -1;
+            izolowane.remove(w1);
             izolowane.remove(w2);
             if(!czy_skierowany){
                 l_krawedzi++;
                 tab[w2 + 1][l_krawedzi+1] = 1;
                 tab[w1 + 1][l_krawedzi+1] = -1;
-                izolowane.remove(w1);
             }
         }
         l_krawedzi++;

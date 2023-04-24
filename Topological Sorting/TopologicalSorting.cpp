@@ -13,15 +13,18 @@ public:
     int tab[10][10] = {};
     int l_wierzcholkow;
     int l_krawedzi = 0;
+    list<int> izolowane;
     int usuniete_wierzcholki[10];
     int index_ostatnio_usunietego = 0;
 
     Macierz_Incydencji(bool x, int n){
         czy_skierowany = x;
         l_wierzcholkow = n;
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 10; ++i)
             usuniete_wierzcholki[i] = -1;
-        }
+
+        for(int i = 0; i<n; i++)
+            izolowane.push_back(i);
     }
 
     void dodaj(int w1, int w2){
@@ -64,7 +67,12 @@ public:
         }
     }
 
-    list<int> znajdzIzolowane(){
+    void znajdzIzolowane(){
+        for(int el : izolowane)
+            cout<<el<<" ";
+    }
+
+    list<int> wierzcholkiBezWejsc(){
         list<int> izolowane = {};
         Macierz_Incydencji kopia = *this;
         bool usuniety;
@@ -95,15 +103,16 @@ void topologicalSort(Macierz_Incydencji macInc){
     }
 
     Macierz_Incydencji copy = macInc;
-    list<int> listOfIsolatedVertexes = copy.znajdzIzolowane();
+    list<int> vertexesWithNoInput = copy.wierzcholkiBezWejsc();
     int i = 0;
 
-    while (!listOfIsolatedVertexes.empty()){
-        for(int vertex : listOfIsolatedVertexes) {
+    while (!vertexesWithNoInput.empty()){
+        for(int vertex : vertexesWithNoInput) {
             array[i++] = vertex;
             copy.usun(vertex);
         }
-        listOfIsolatedVertexes = copy.znajdzIzolowane();
+        //copy.wyswietl();
+        vertexesWithNoInput = copy.wierzcholkiBezWejsc();
     }
     cout<<"\nSortowanie topologiczne"<<endl;
     for (int el:array) {
@@ -130,6 +139,26 @@ int main(){
         if(w1 == -1) break;
         macierz_incydencji.dodaj(w1, w2);
     }
+    macierz_incydencji.wyswietl();
 
     topologicalSort(macierz_incydencji);
+
+//    Graph without a cycle
+//    5 2
+//    5 0
+//    4 0
+//    4 1
+//    2 3
+//    3 1
+//      -1 2
+
+//    Graph with a cycle
+//    5 2
+//    5 0
+//    4 0
+//    0 4
+//    4 1
+//    2 3
+//    3 1
+//      -1 0
 }
