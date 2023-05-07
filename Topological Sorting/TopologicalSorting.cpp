@@ -96,7 +96,7 @@ public:
 };
 
 
-void topologicalSort(Macierz_Incydencji macInc){
+void topologicalSort(const Macierz_Incydencji& macInc){
     int array[macInc.l_wierzcholkow];
     for (int i = 0; i < macInc.l_wierzcholkow; ++i) {
         array[i]=-1;
