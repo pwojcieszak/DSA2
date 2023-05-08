@@ -1,4 +1,7 @@
 #include <iostream>
+#include <stack>
+#include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -153,32 +156,113 @@ public:
     }
 };
 
-void DFS(Lista_Sasiedztwa lista, int start, char* odwiedzone, StosWsk<int> stos){
-    node<int>* currentNode = lista.tablica[start].head;
-    if(odwiedzone[start] != 'T') {
+void DFS(Lista_Sasiedztwa lista, int start, char* odwiedzone, StosWsk<int> stos) {
+    if (odwiedzone[start] != 'T') {
         odwiedzone[start] = 'T';
-        cout << start+1 << endl;
+        cout << start + 1 << endl;
+        node<int> *currentNode = lista.tablica[start].head;
         while (currentNode) {
             stos.push(currentNode->value);
             currentNode = currentNode->next;
         }
     }
     int kolejny = stos.pop();
-    if(kolejny!=-1) DFS(lista, kolejny, odwiedzone, stos);
+    if (kolejny != -1) DFS(lista, kolejny, odwiedzone, stos);
 }
 
-void BFS(Lista_Sasiedztwa lista, int start, char* odwiedzone, KolejkaWsk<int> kolejka){
-    node<int>* currentNode = lista.tablica[start].head;
-    if(odwiedzone[start] != 'T') {
+void DFS(Lista_Sasiedztwa lista, int start, char* odwiedzone){
         odwiedzone[start] = 'T';
-        cout <<start+1<< endl;
+        cout << start+1 << endl;
+        node<int>* currentNode = lista.tablica[start].head;
         while (currentNode) {
-            kolejka.enqueue(currentNode->value);
+            if(odwiedzone[currentNode->value] != 'T'){
+                DFS(lista, currentNode->value, odwiedzone);
+            }
+            currentNode = currentNode->next;
+        }
+}
+
+
+void DFS(Lista_Sasiedztwa lista) {
+    int s = 0;
+    vector<bool> visited(lista.ile_wierzcholkow, false);
+    stack<int> stack;
+
+    stack.push(s);
+    visited[s] = true;
+
+    while(!stack.empty()){
+        int currentVertex = stack.top();
+        stack.pop();
+
+        cout << currentVertex + 1 << endl;
+
+        node<int> *currentNode = lista.tablica[currentVertex].head;
+        while (currentNode) {
+            if(!visited[currentNode->value]){
+                visited[currentNode->value] = true;
+                stack.push(currentNode->value);
+            }
             currentNode = currentNode->next;
         }
     }
-    int kolejny = kolejka.dequeue();
-    if(kolejny!=-1) BFS(lista, kolejny, odwiedzone, kolejka);
+}
+
+void BFS(Lista_Sasiedztwa lista, int s, char* visited, KolejkaWsk<int> queue){
+    if(visited[s] != 'T') {
+        visited[s] = 'T';
+        cout <<s+1<< endl;
+        node<int>* currentNode = lista.tablica[s].head;
+        while (currentNode) {
+            queue.enqueue(currentNode->value);
+            currentNode = currentNode->next;
+        }
+    }
+    int kolejny = queue.dequeue();
+    if(kolejny!=-1) BFS(lista, kolejny, visited, queue);
+}
+
+void BFS(Lista_Sasiedztwa lista){
+    int s = 0;
+    vector<bool> visited(lista.ile_wierzcholkow, false);
+    queue<int> queue;
+
+    queue.push(s);
+    visited[s] = true;
+
+    while(!queue.empty()) {
+        int currentVertex = queue.front();
+        queue.pop();
+
+        cout << currentVertex + 1 << endl;
+
+        node<int>* currentNode = lista.tablica[currentVertex].head;
+        while (currentNode) {
+            if(!visited[currentNode->value]){
+                visited[currentNode->value] = true;
+                queue.push(currentNode->value);
+            }
+            currentNode = currentNode->next;
+        }
+    }
+
+//    while(!queue.empty()) {
+//        int currentVertex = queue.front();
+//        queue.pop();
+//
+//        if (!visited[currentVertex])
+//        {
+//            visited[currentVertex] = true;
+//            cout << currentVertex + 1 << endl;
+//        }
+//
+//        node<int>* currentNode = lista.tablica[currentVertex].head;
+//        while (currentNode) {
+//            if(!visited[currentNode->value])
+//                queue.push(currentNode->value);
+//            currentNode = currentNode->next;
+//        }
+//    }
 }
 
 int main(){
@@ -204,11 +288,15 @@ int main(){
     char odwiedzoneDFS[liczba_wierzcholkow];
     StosWsk<int> stos;
     DFS(lista_sasiedztwa, 0, odwiedzoneDFS, stos);
+    DFS(lista_sasiedztwa);
+    char odwiedzoneDFS2[liczba_wierzcholkow];
+    DFS(lista_sasiedztwa, 0, odwiedzoneDFS2);
 
     cout<<"\n\n";
     char odwiedzoneBFS[liczba_wierzcholkow];
     KolejkaWsk<int> kolejka;
     BFS(lista_sasiedztwa, 0, odwiedzoneBFS, kolejka);
+    BFS(lista_sasiedztwa);
 }
 
 //0 1
