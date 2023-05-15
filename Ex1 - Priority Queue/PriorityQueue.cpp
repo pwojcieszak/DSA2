@@ -33,10 +33,6 @@ public:
         if(lastIndex<N){
             int childIndex = lastIndex;
             arr[lastIndex++] =  new node<T>{priority, el};
-            //Porownac dziecko z rodzicem mozna na dwa sposoby:
-            //1) Za pomoca heapify (więcej obliczeń niepotrzebne sprawdzanie drugiego dziecka)
-            //heapify(0);
-            //2) Bezposrednio wyluskujac indeks rodzica z indeksu dziecka wzorem parent = (child-1)/2
             int parentIndex = (childIndex - 1) / 2;
             while(arr[parentIndex]->priority < arr[childIndex]->priority){
                 swap(arr[parentIndex], arr[childIndex]);
@@ -49,8 +45,9 @@ public:
     T get(){
         T temp = arr[0]->value;
         arr[0] = arr[--lastIndex];
-        delete arr[lastIndex+1];
-        heapify(0);
+        delete arr[lastIndex];
+        arr[lastIndex] = nullptr;
+        if(lastIndex != 0) heapify(0);
         return temp;
     }
 
