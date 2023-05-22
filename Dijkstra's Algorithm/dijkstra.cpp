@@ -10,7 +10,6 @@ class Macierz_Sasiedztwa{
 private:
     int czy_skierowany;
     int tab[10][10] = {};
-    int weights[10][10] = {};
     int l_wierzcholkow;
     list<int> izolowane;
 public:
@@ -23,30 +22,16 @@ public:
     }
 
     void dodaj(int w1, int w2, int weight){
-        if(tab[w1 + 1][w2 + 1] == 0){
-            tab[w1 + 1][w2 + 1] = 1;
-            weights[w1][w2] = weight;
+        if(tab[w1][w2] == 0){
+            tab[w1][w2] = weight;
             izolowane.remove(w2);
             izolowane.remove(w1);
             if (!czy_skierowany) {
-                tab[w2 + 1][w1 + 1] = 1;
-                weights[w2][w1] = weight;
+                tab[w2][w1] = weight;
             }
         }
     }
 
-    void wyswietl(){
-        cout<<"\nMacierz sasiedztwa"<<endl;
-        for(int i=0; i<l_wierzcholkow+1; i++) {
-            for (int j = 0; j < l_wierzcholkow+1; j++) {
-                if (i == 0 && j == 0) cout<<"  ";
-                else if (i == 0) cout << j-1 << " ";
-                else if (j == 0) cout<< i-1 <<" ";
-                else cout<<tab[i][j]<<" ";
-            }
-            cout<<endl;
-        }
-    }
 
     void znajdzIzolowane() {
         for(int x : izolowane)
@@ -80,9 +65,9 @@ public:
 
             if(std::find(S.begin(), S.end(), u) == S.end()) S.push_back(u);
             for (int i = 0; i < l_wierzcholkow; ++i) {
-                if(tab[u+1][i+1] == 1){
-                    if(D[i] > D[u] + weights[u][i]){
-                        D[i] = D[u] + weights[u][i];
+                if(tab[u][i] > 0){
+                    if(D[i] > D[u] + tab[u][i]){
+                        D[i] = D[u] + tab[u][i];
                         Pr[i] = u;
                     }
                 }
