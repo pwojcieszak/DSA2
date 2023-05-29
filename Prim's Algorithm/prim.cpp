@@ -4,74 +4,19 @@
 #include <algorithm>
 #include <queue>
 
-struct Pair{
+struct Node{
     int v1;
     int v2;
-};
-
-template <typename T>
-struct node{
     int priority;
-    T value;
 };
 
-template <typename T>
-class PriorityQueue{
-private:
-    const static int N = 100;
-    node<T>* arr[N]{};
-    int lastIndex = 0;
-
-    void heapify(int i)
-    {
-        unsigned int smallest = i;
-        unsigned int l = 2*i+1;
-        unsigned int r = 2*i+2;
-        if (l < lastIndex && arr[l]->priority < arr[smallest]->priority) smallest = l;
-        if (r < lastIndex && arr[r]->priority < arr[smallest]->priority) smallest = r;
-
-        if (smallest != i) {
-            std::swap(arr[i], arr[smallest]);
-            heapify(smallest);
+struct NodeComparator {
+    bool operator()(const Node& p1, const Node& p2) const {
+        // Sortowanie względem najmniejszej wartości v1
+        if (p1.priority != p2.priority) {
+            return p1.priority > p2.priority;  // Porównanie odwrotne, aby uzyskać rosnący porządek
         }
-    }
-public:
-    void put(T el, int priority){
-        if(lastIndex<N){
-            int childIndex = lastIndex;
-            arr[lastIndex++] =  new node<T>{priority, el};
-            int parentIndex = (childIndex - 1) / 2;
-            while(arr[parentIndex]->priority > arr[childIndex]->priority){
-                std::swap(arr[parentIndex], arr[childIndex]);
-                childIndex = parentIndex;
-                parentIndex = (childIndex - 1) / 2;
-            }
-        }
-    }
-
-    T get(){
-        T temp = arr[0]->value;
-        arr[0] = arr[--lastIndex];
-        delete arr[lastIndex];
-        arr[lastIndex] = nullptr;
-        if(lastIndex != 0) heapify(0);
-        return temp;
-    }
-
-    T front(){
-        return arr[0]->value;
-    }
-
-    bool isEmpty(){
-        return arr[0] == nullptr;
-    }
-
-    void makeNull(){
-        for(int i=lastIndex-1; i>=0; i--) {
-            delete arr[i];
-            arr[i] = nullptr;
-        }
-        lastIndex = 0;
+        return 1;
     }
 };
 
@@ -92,7 +37,6 @@ public:
     }
 
     void dodaj(int w1, int w2, int weight) {
-        cout<<"dodaje "<<w1<<w2<<weight<<endl;
         if (tab[w1][w2] == 0) {
             tab[w1][w2] = weight;
             izolowane.remove(w2);
@@ -101,7 +45,6 @@ public:
                 tab[w2][w1] = weight;
             }
         }
-        cout<<"dodane"<<endl;
     }
 
 
@@ -129,9 +72,9 @@ public:
     }
     void prims_algorithm() {
         srand(time(nullptr));
-        int currentVertex = 1;
-        Pair currentPair{currentVertex, currentVertex};
-        PriorityQueue<Pair> priorityQueue;
+        int currentVertex = rand() % l_wierzcholkow;
+        Node currentNode{currentVertex, currentVertex, 0};
+        priority_queue<Node, std::vector<Node>, NodeComparator> priorityQueue;
         bool processed[this->l_wierzcholkow];
         Macierz_Sasiedztwa result(0, l_wierzcholkow);
 
@@ -141,52 +84,21 @@ public:
         processed[currentVertex] = true;
 
         while(!isFinished(processed, l_wierzcholkow)){
-            cout<<"current vertex "<<currentVertex<<endl;
             for (int i = 0; i < l_wierzcholkow; ++i) {
-                if(tab[currentVertex][i] > 0) {
-                    priorityQueue.put(Pair{currentVertex, i}, tab[currentVertex][i]);
-                    cout<<"sasiad "<<i<<endl;
-                }
+                if(tab[currentVertex][i] > 0)
+                    priorityQueue.push(Node{currentVertex, i, tab[currentVertex][i]});
             }
 
-            while(processed[currentPair.v1]) {
-                currentPair = priorityQueue.get();
-                cout<<"current pair "<<currentPair.v1<<currentPair.v2<<endl;
+            while(processed[currentNode.v2]) {
+                currentNode = priorityQueue.top();
+                priorityQueue.pop();
             }
 
-            processed[currentPair.v2] = true;
-            cout<<"zmieniono na true"<<endl;
-            result.dodaj(currentPair.v1, currentPair.v2, tab[currentPair.v1][currentPair.v2]);
-            cout<<"dodano"<<endl;
-            currentVertex = currentPair.v2;
+            processed[currentNode.v2] = true;
+            result.dodaj(currentNode.v1, currentNode.v2, tab[currentNode.v1][currentNode.v2]);
+            currentVertex = currentNode.v2;
         }
-    }
-
-    void prims_algorithm2() {
-        list<int> mst;  // Minimalne drzewo rozpinające (Minimum Spanning Tree)
-        PriorityQueue<Pair> pq;  // Kolejka priorytetowa wierzchołków i wag
-
-        int src = 0;  // Początkowy wierzchołek
-        mst.push_back(src);
-
-        while (!izolowane.empty()) {
-            for (int v : mst) {
-                for (int i = 0; i < l_wierzcholkow; i++) {
-                    if (tab[v][i] != 0 && find(mst.begin(), mst.end(), i) == mst.end()) {
-                        pq.put({v, i}, tab[v][i]);
-                    }
-                }
-            }
-
-            Pair minEdge = pq.get();
-            int v1 = minEdge.v1;
-            int v2 = minEdge.v2;
-
-            mst.push_back(v2);
-            izolowane.remove(v2);
-
-            cout << "Dodano krawędź: " << v1 << " - " << v2 << endl;
-        }
+        result.wyswietl();
     }
 
 };
@@ -210,7 +122,7 @@ int main(){
 //    2 4 2
 //    3 4 2
 //        -1 0 0
-    macierzSasiedztwa.prims_algorithm2();
+    macierzSasiedztwa.prims_algorithm();
 
 
 }
