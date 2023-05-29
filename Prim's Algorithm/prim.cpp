@@ -63,6 +63,7 @@ public:
             cout<<endl;
         }
     }
+
     static bool isFinished(const bool* arr, int size){
         for (int i = 0; i < size; ++i) {
             if(!arr[i])
@@ -70,13 +71,15 @@ public:
         }
         return true;
     }
+
     void prims_algorithm() {
         srand(time(nullptr));
         int currentVertex = rand() % l_wierzcholkow;
-        Node currentNode{currentVertex, currentVertex, 0};
+
+        Macierz_Sasiedztwa result(0, l_wierzcholkow);
         priority_queue<Node, std::vector<Node>, NodeComparator> priorityQueue;
         bool processed[this->l_wierzcholkow];
-        Macierz_Sasiedztwa result(0, l_wierzcholkow);
+        Node currentNode{currentVertex, currentVertex, 0};
 
         for (int i = 0; i < l_wierzcholkow; ++i) {
             processed[i] = false;
