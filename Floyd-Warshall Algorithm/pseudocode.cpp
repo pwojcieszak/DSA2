@@ -25,6 +25,6 @@ floyd_warshall(D, P){
 
     //wypisanie sciezki
     while i > -1 do:
-        print path[i++]
+        print path[i--]
 }
 
